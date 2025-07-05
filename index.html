@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reelusion - Escape Into Magic</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Georgia', serif; }
+    body { background-color: #000; color: #fff; overflow: hidden; }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-size: cover;
+      background-position: center;
+      text-align: center;
+      padding: 2rem;
+      animation: fade 1s ease;
+    }
+    .slide.active { display: flex; z-index: 1; }
+    @keyframes fade {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    h1, h2, p {
+      color: #ffd700;
+      text-shadow: 0 0 10px #fff;
+    }
+    .btn {
+      background: linear-gradient(45deg, gold, orange);
+      border: none;
+      border-radius: 12px;
+      margin: 1rem;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #fff;
+    }
+    #music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: gold;
+      color: #000;
+      border-radius: 50%;
+      border: none;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      box-shadow: 0 0 15px gold;
+      cursor: pointer;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <button id="music-btn" title="Play Music">🎵</button>
+  <audio id="bg-music" loop>
+    <source src="https://media.vocaroo.com/mp3/1had0ctx85zd" type="audio/mpeg" />
+  </audio>
+  <div id="slides"></div>
+
+  <script>
+    const slidesData = [
+      {
+        title: 'REELUSION',
+        text: 'Step into a world where magic meets mystery. Welcome to Reelusion — your cinematic escape begins here.',
+        bg: 'https://wallpapercave.com/wp/wp2634281.jpg',
+        question: 'Do you want to begin the magical journey?'
+      },
+      {
+        title: 'The Problem',
+        text: 'Millions of fans love magical stories but remain distant observers. They want to walk through Hogwarts and feel real spells.',
+        bg: 'https://wallpapercave.com/wp/wp9774480.jpg',
+        question: 'Do you think fans deserve more than watching?'
+      },
+      {
+        title: 'The Solution',
+        text: 'Reelusion transforms fantasy into live escape room experiences — full of enchantment and story-driven puzzles.',
+        bg: 'https://wallpapercave.com/wp/wp9774447.jpg',
+        question: 'Can immersive rooms bring stories to life?'
+      },
+      {
+        title: 'How It Works',
+        text: 'Each escape room replicates magical sets using props, lighting, AR, and sound effects. Fans become part of the story.',
+        bg: 'https://wallpapercave.com/wp/wp7418465.jpg',
+        question: 'Would you love to play inside a story world?'
+      },
+      {
+        title: 'Uniqueness',
+        text: 'What sets us apart? Emotional storytelling, rich detail, and nostalgia-fueled adventures — powered by tech and imagination.',
+        bg: 'https://wallpapercave.com/wp/wp2634296.jpg',
+        question: 'Does nostalgia and magic make an unforgettable combo?'
+      },
+      {
+        title: 'Meet the Team',
+        text: 'Aditya, Sparsh, Aneesa, Divyansh, Pranjal — the creators of Reelusion. Fans. Dreamers. Doers.',
+        bg: 'https://wallpapercave.com/wp/wp2634312.jpg',
+        question: 'Do you believe in our magical vision?'
+      },
+      {
+        title: 'Thank You!',
+        text: 'Your magical journey through Reelusion ends here… or does it? The real escape begins when you join us.',
+        bg: 'https://wallpapercave.com/wp/wp9472561.jpg'
+      }
+    ];
+
+    const slidesContainer = document.getElementById('slides');
+    let current = 0;
+
+    slidesData.forEach((data, index) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      if (index === 0) slide.classList.add('active');
+      slide.style.backgroundImage = `url('${data.bg}')`;
+      slide.innerHTML = `<h2>${data.title}</h2><p>${data.text}</p>`;
+      if (data.question) {
+        slide.innerHTML += `<div id="qBox${index}" class="controls">
+          <button class="btn" onclick="showQuestion(${index}, \"${data.question}\")">Next</button>
+        </div>`;
+      }
+      slidesContainer.appendChild(slide);
+    });
+
+    function showQuestion(index, question) {
+      const qBox = document.getElementById(`qBox${index}`);
+      qBox.innerHTML = `<p style='margin-top: 2rem;'>${question}</p>
+        <button class='btn' onclick='goNext()'>Yes</button>
+        <button class='btn' onclick='repeatNo(${index}, "${question}")'>No</button>`;
+    }
+
+    function goNext() {
+      const slides = document.querySelectorAll('.slide');
+      slides[current].classList.remove('active');
+      current++;
+      if (current >= slides.length) return;
+      slides[current].classList.add('active');
+    }
+
+    function repeatNo(index, question) {
+      const qBox = document.getElementById(`qBox${index}`);
+      qBox.innerHTML = `<p style='margin-top: 2rem;'>${question}</p>
+        <p style='color:red;font-weight:bold;'>You must say Yes to continue 🚫</p>
+        <button class='btn' onclick='goNext()'>Yes</button>
+        <button class='btn' onclick='repeatNo(${index}, \"${question}\")'>No</button>`;
+    }
+
+    const music = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    musicBtn.addEventListener('click', () => {
+      music.play();
+      musicBtn.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
